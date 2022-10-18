@@ -61,6 +61,7 @@ public class client extends javax.swing.JFrame {
         FixRegistry = new javax.swing.JButton();
         Exit = new javax.swing.JButton();
         ProcessRunning = new javax.swing.JButton();
+        checkscreen = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -127,6 +128,13 @@ public class client extends javax.swing.JFrame {
             }
         });
 
+        checkscreen.setText("CheckScreen");
+        checkscreen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkscreenActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -141,20 +149,20 @@ public class client extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(ProcessRunning, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(FixRegistry, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(FixRegistry, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(ShutDown)
+                                .addGap(9, 9, 9)
+                                .addComponent(Screenshot)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(Exit, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(ShutDown)
-                                        .addGap(9, 9, 9)
-                                        .addComponent(Screenshot))
-                                    .addComponent(AppRunning, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(27, 27, 27)
-                                .addComponent(KeyStroke, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                .addComponent(checkscreen))
+                            .addComponent(AppRunning, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Exit, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(KeyStroke, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(51, 51, 51)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -173,12 +181,13 @@ public class client extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(ShutDown, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(Screenshot, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(Screenshot, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(checkscreen, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(KeyStroke, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(FixRegistry, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Exit, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Exit, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(FixRegistry, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(ProcessRunning, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(30, Short.MAX_VALUE))
         );
@@ -198,6 +207,8 @@ public class client extends javax.swing.JFrame {
             SocketAddress socketaddr = new InetSocketAddress(ip,6920); //tạo socket address với biến socketaddr cùng vời địa chỉ ip và port
             program.sclient = new Socket();
             program.sclient.connect(socketaddr); //connect với server
+            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
+            program.is = new BufferedReader(new InputStreamReader(program.sclient.getInputStream()));
             JOptionPane.showMessageDialog(rootPane, "Kết nối thành công"); // tạo messagebox kết nói thành công
         } catch(Exception ex){
             JOptionPane.showMessageDialog(rootPane, "Kết nối thất bại tới " + ip);
@@ -216,7 +227,7 @@ public class client extends javax.swing.JFrame {
         process.show();
         String s = "PROCESS";
         try {
-            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
+//            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
             program.os.write(s);
             program.os.newLine();
             program.os.flush();
@@ -231,14 +242,15 @@ public class client extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane, "Chưa kết nối tới server");
             return;
         }
-        String s = "QUIT";
+        String s = "EXIT";
         try {
-            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
+//            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
             program.os.write(s);
             program.os.newLine();
             program.os.flush();
             program.sclient.close();
             program.os.close();
+            program.is.close();
         } catch (IOException ex) {
             Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -255,7 +267,7 @@ public class client extends javax.swing.JFrame {
         pic.show();
         String s = "TAKEPIC";
         try {
-            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
+//            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
             program.os.write(s);
             program.os.newLine();
             program.os.flush();
@@ -275,7 +287,7 @@ public class client extends javax.swing.JFrame {
         listApp.show();
         String s = "APPLICATION";
         try {
-            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
+//            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
             program.os.write(s);
             program.os.newLine();
             program.os.flush();
@@ -292,7 +304,7 @@ public class client extends javax.swing.JFrame {
         }
         String s = "SHUTDOWN";
         try {
-            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
+//            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
             program.os.write(s);
             program.os.newLine();
             program.os.flush();
@@ -311,7 +323,7 @@ public class client extends javax.swing.JFrame {
         keylog.show();
         String s = "KEYLOG";
         try {
-            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
+//            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
             program.os.write(s);
             program.os.newLine();
             program.os.flush();
@@ -330,7 +342,7 @@ public class client extends javax.swing.JFrame {
         registry.show();
         String s = "REGISTRY";
         try {
-            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
+//            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
             program.os.write(s);
             program.os.newLine();
             program.os.flush();
@@ -338,6 +350,26 @@ public class client extends javax.swing.JFrame {
             Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_FixRegistryActionPerformed
+
+    private void checkscreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkscreenActionPerformed
+        if(program.sclient == null)
+        {
+            JOptionPane.showMessageDialog(rootPane, "Chưa kết nối tới server");
+            return;
+        }
+        checkscreen checkscreen = new checkscreen();
+        checkscreen.show();
+        String s = "CHECKSCREEN";
+        try {
+//            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
+            program.os.write(s);
+            program.os.newLine();
+            program.os.flush();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_checkscreenActionPerformed
 
     /**
      * @param args the command line arguments
@@ -392,6 +424,7 @@ public class client extends javax.swing.JFrame {
     private javax.swing.JButton ProcessRunning;
     private javax.swing.JButton Screenshot;
     private javax.swing.JButton ShutDown;
+    private javax.swing.JButton checkscreen;
     private javax.swing.JButton ipconnect;
     private javax.swing.JTextField iptext;
     // End of variables declaration//GEN-END:variables

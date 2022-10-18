@@ -34,25 +34,23 @@
                   <Group type="102" attributes="0">
                       <Component id="ProcessRunning" min="-2" pref="92" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="FixRegistry" min="-2" pref="210" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="FixRegistry" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="ShutDown" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
+                              <Component id="Screenshot" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="Exit" pref="82" max="32767" attributes="0"/>
+                              <Component id="checkscreen" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="ShutDown" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-                                      <Component id="Screenshot" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="AppRunning" min="-2" pref="172" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                              <Component id="KeyStroke" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="AppRunning" max="32767" attributes="0"/>
                       </Group>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="Exit" min="-2" pref="82" max="-2" attributes="0"/>
+                          <Component id="KeyStroke" min="-2" pref="92" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -77,14 +75,15 @@
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="ShutDown" alignment="3" min="-2" pref="60" max="-2" attributes="0"/>
                                   <Component id="Screenshot" alignment="3" min="-2" pref="60" max="-2" attributes="0"/>
+                                  <Component id="checkscreen" alignment="3" min="-2" pref="60" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Component id="KeyStroke" min="-2" pref="141" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="FixRegistry" alignment="3" min="-2" pref="62" max="-2" attributes="0"/>
-                          <Component id="Exit" alignment="3" min="-2" pref="62" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="Exit" alignment="0" min="-2" pref="62" max="-2" attributes="0"/>
+                          <Component id="FixRegistry" min="-2" pref="62" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Component id="ProcessRunning" max="32767" attributes="0"/>
@@ -165,6 +164,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ProcessRunningActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="checkscreen">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="CheckScreen"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="checkscreenActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

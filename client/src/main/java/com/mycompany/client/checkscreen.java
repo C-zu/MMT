@@ -4,12 +4,15 @@
  */
 package com.mycompany.client;
 
+import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -19,18 +22,19 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author LEGION
  */
-public class pic extends javax.swing.JFrame {
+public class checkscreen extends javax.swing.JFrame {
 
     /**
      * Creates new form pic
      */
-    public pic() {
+    public checkscreen() {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
@@ -44,30 +48,33 @@ public class pic extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        screenshot = new javax.swing.JLabel();
-        takepic = new javax.swing.JButton();
-        savepic = new javax.swing.JButton();
+        cam = new javax.swing.JLabel();
+        start = new javax.swing.JButton();
+        stop = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
         });
 
-        screenshot.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        cam.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        takepic.setText("Take screenshot");
-        takepic.addActionListener(new java.awt.event.ActionListener() {
+        start.setText("Start");
+        start.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                takepicActionPerformed(evt);
+                startActionPerformed(evt);
             }
         });
 
-        savepic.setText("Save");
-        savepic.addActionListener(new java.awt.event.ActionListener() {
+        stop.setText("Stop");
+        stop.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                savepicActionPerformed(evt);
+                stopActionPerformed(evt);
             }
         });
 
@@ -77,12 +84,12 @@ public class pic extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(screenshot, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
+                .addComponent(cam, javax.swing.GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(takepic)
+                    .addComponent(start)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(savepic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(stop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -91,55 +98,48 @@ public class pic extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(screenshot, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cam, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(takepic, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(start, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 184, Short.MAX_VALUE)
-                        .addComponent(savepic, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(stop, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(23, 23, 23))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void takepicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_takepicActionPerformed
+    private void startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startActionPerformed
+        start();
+    }//GEN-LAST:event_startActionPerformed
 
+    public void start()
+    {
         try {
-            String s = "TAKE";
+            String s = "START";
 //            program.os = new BufferedWriter(new OutputStreamWriter(program.sclient.getOutputStream()));
             program.os.write(s);
             program.os.newLine();
             program.os.flush();
-            BufferedImage img = ImageIO.read(ImageIO.createImageInputStream(program.sclient.getInputStream()));
-            Image img1 = img.getScaledInstance(screenshot.getWidth(), screenshot.getHeight(),Image.SCALE_SMOOTH);
-            ImageIcon icon = new ImageIcon(img1);
-            program.img1 = img;
-            int scale = 1; 
-            int width = icon.getIconWidth();
-            int newWidth = width / scale;
-            screenshot.setIcon(new ImageIcon(icon.getImage().getScaledInstance(newWidth, -1, java.awt.Image.SCALE_SMOOTH)));
+            while(true){
+                BufferedImage img = ImageIO.read(program.sclient.getInputStream());
+                cam.getGraphics().drawImage(img,0,0,cam.getWidth(),cam.getHeight(),null);
+                img = null;
+                cam.removeAll();
+                try {
+                    Thread.sleep(20);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,e);
+                }
+            }
         } catch (IOException ex) {
             Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_takepicActionPerformed
+    }
+    private void stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopActionPerformed
 
-    private void savepicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savepicActionPerformed
-        
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileFilter(new FileNameExtensionFilter("*.png", "png"));
-        if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            try {
-                ImageIO.write((RenderedImage) program.img1, "png", new File(file.getAbsolutePath()+".png"));
-            } catch (IOException ex) {
-                System.out.println("Failed to save image!");
-            }
-        } else {
-            System.out.println("No file choosen!");
-        }
-
-    }//GEN-LAST:event_savepicActionPerformed
+    }//GEN-LAST:event_stopActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         try {
@@ -148,10 +148,15 @@ public class pic extends javax.swing.JFrame {
             program.os.write(s);
             program.os.newLine();
             program.os.flush();
+            return;
         } catch (IOException ex) {
             Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_formWindowClosing
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+
+    }//GEN-LAST:event_formWindowClosed
 
     /**
      * @param args the command line arguments
@@ -189,8 +194,8 @@ public class pic extends javax.swing.JFrame {
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton savepic;
-    private javax.swing.JLabel screenshot;
-    private javax.swing.JButton takepic;
+    private javax.swing.JLabel cam;
+    private javax.swing.JButton start;
+    private javax.swing.JButton stop;
     // End of variables declaration//GEN-END:variables
 }

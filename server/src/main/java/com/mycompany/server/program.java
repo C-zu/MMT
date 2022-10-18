@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.UIManager;
+import org.apache.commons.lang3.StringUtils;
 /**
  *
  * @author LEGION
@@ -51,16 +52,28 @@ public class program {
         }
         server server = new server();
         server.setVisible(true);
-//        try {
-//        String line;
-//        Process p = Runtime.getRuntime().exec(System.getenv("windir") +"\\system32\\"+"tasklist.exe");
-//        BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//        while ((line = input.readLine()) != null) {
-//            System.out.println(line); //<-- Parse data here.
-//        }
-//        input.close();
-//        } catch (Exception err) {
-//        err.printStackTrace();
-//        }
-    }
+//            try {
+//            String line;
+//            Process p = Runtime.getRuntime().exec(System.getenv("windir") +"\\system32\\"+"tasklist.exe");
+//            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//            int i;
+//            for(i = 0; (line = input.readLine()) != null;i++) {
+//                line = input.readLine();
+//                input.readLine();
+//                if (i>2)
+//                {
+//                    System.out.println(line);
+//                }
+//            }
+////            line = "lsass.exe                     1128 Services                   0     26,220 K";
+////            String[] splitline = StringUtils.split(line);
+////            for (i = 0; i < splitline.length;i++)
+////            {
+////                System.out.println(splitline[i]);
+////            }
+//            input.close();
+//            } catch (Exception err) {
+//            err.printStackTrace();
+//            }
+        }
 }

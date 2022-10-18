@@ -14,8 +14,13 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import org.apache.commons.lang3.StringUtils;
 /**
  *
  * @author LEGION
@@ -69,7 +74,7 @@ public class server extends javax.swing.JFrame {
     public String receiveSignal(String s)
     {
         try{
-           program.is = new BufferedReader(new InputStreamReader(program.sserver.getInputStream()));
+//           program.is = new BufferedReader(new InputStreamReader(program.sserver.getInputStream()));
            s = program.is.readLine();
         }catch (IOException e) {
            s = "QUIT";
@@ -83,6 +88,8 @@ public class server extends javax.swing.JFrame {
        try {
            listener = new ServerSocket(6920);
            program.sserver = listener.accept();
+           program.is = new BufferedReader(new InputStreamReader(program.sserver.getInputStream()));
+           program.os = new BufferedWriter(new OutputStreamWriter(program.sserver.getOutputStream()));
            String s = null;
            while (true)
            {
@@ -94,7 +101,8 @@ public class server extends javax.swing.JFrame {
                     case "TAKEPIC": takepic(); break;
                     case "PROCESS": process(); break;
                     case "APPLICATION": application(); break;
-                    case "QUIT": {
+                    case "CHECKSCREEN": checkscreen(); break;
+                    case "EXIT": {
                         program.sserver.close();
                         listener.close();
                         return;
@@ -141,7 +149,7 @@ public class server extends javax.swing.JFrame {
 //    }
     public void keylog()
     {
-        String ss = null;
+        String s = null;
     }
     
     public void shutdown()
@@ -169,6 +177,56 @@ public class server extends javax.swing.JFrame {
     public void process()
     {
         String ss = null;
+        while (true)
+        {
+            switch(receiveSignal(ss))
+            {
+                case "XEM" ->                 {
+                    try {
+                        String line = null;
+                        Process p = Runtime.getRuntime().exec(System.getenv("windir") +"\\system32\\"+"tasklist.exe");
+                        BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));                  
+                        int soprocess = 0;
+                        while(input.readLine() != null){
+                            soprocess++;
+                        }
+                        String soprocess1 = Integer.toString(soprocess);
+                        program.os = new BufferedWriter(new OutputStreamWriter(program.sserver.getOutputStream()));
+                        program.os.write(soprocess1);
+                        program.os.newLine();
+                        program.os.flush();
+                        Process p1 = Runtime.getRuntime().exec(System.getenv("windir") +"\\system32\\"+"tasklist.exe");
+                        BufferedReader input1 = new BufferedReader(new InputStreamReader(p1.getInputStream())); 
+                        ObjectOutputStream out = new ObjectOutputStream(program.sserver.getOutputStream());
+                        for(int i = 0; (i<soprocess) ;i++) {
+                            line = input1.readLine();
+                            if (i>4)
+                            {
+                                for (int u =0; u < line.length()-2;u++)
+                                {
+                                    if ((line.charAt(u)>64 && line.charAt(u)<=122)&&(line.charAt(u+2)>64 && line.charAt(u+2)<=122) && line.charAt(u+1)==' ')
+                                    {
+                                        line = line.substring(0,u+1)+"_"+line.substring(u+2,line.length());
+                                    }
+                                }
+                                String[] splitline = line.trim().split("\\s{1,100}");
+                                String data[] = {splitline[0],splitline[1],splitline[2],splitline[3],splitline[4]+splitline[5]};
+                                out.writeObject(data);
+                            }
+                        }
+                        out.flush();
+                    }
+                    catch(Exception e)
+                    {
+                      JOptionPane.showMessageDialog(null,e);
+                    } finally {
+                    }
+                }
+                  case "QUIT" -> {
+                                        return;
+                }
+            }
+        }
     }
     
     public void takepic()
@@ -178,21 +236,48 @@ public class server extends javax.swing.JFrame {
         {
             switch(receiveSignal(ss))
             {
-                case "TAKE":
-                {
+                case "TAKE" ->                 {
                     try{
-                    Toolkit toolkit = Toolkit.getDefaultToolkit();
+                        Toolkit toolkit = Toolkit.getDefaultToolkit();
                         Dimension dimensions = toolkit.getScreenSize();
                         Robot robot = new Robot();  // Robot class
                         BufferedImage screenshot = robot.createScreenCapture(new Rectangle(dimensions));
-                        ImageIO.write((RenderedImage) screenshot,"png", program.sserver.getOutputStream());
+                        ImageIO.write(screenshot,"png", program.sserver.getOutputStream());
                     } catch(Exception ex){
                             JOptionPane.showMessageDialog(null,ex);
                     }
-                    break;
                 }
-                case "QUIT":
-                {
+                case "QUIT" ->                 {
+                    return;
+                }
+            }
+        }
+    }
+    
+    public void checkscreen()
+    {
+        String ss = null;
+        while (true)
+        {
+            switch(receiveSignal(ss))
+            {
+                case "START" ->                 {
+                    try{
+                        Robot robot = new Robot();
+                        Toolkit toolkit = Toolkit.getDefaultToolkit();
+                        Dimension d = toolkit.getScreenSize();
+
+                        while (true){
+                            ByteArrayOutputStream ous = new ByteArrayOutputStream();
+                            BufferedImage img = robot.createScreenCapture(new Rectangle(0,0,(int) d.getWidth(), (int) d.getHeight()));                            ImageIO.write(img, "png", ous);
+                            program.sserver.getOutputStream().write(ous.toByteArray());
+                            ous.reset();
+                        }
+                    } catch(Exception ex){
+                            JOptionPane.showMessageDialog(null,ex);
+                    }
+                }
+                case "QUIT" ->                 {
                     return;
                 }
             }
